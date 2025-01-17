@@ -352,7 +352,7 @@
         </a>
       </div>
 
-      <!-- Hero image replaced with img/derma.jpg -->
+      <!-- Hero image -->
       <div class="w-full md:w-1/2 flex items-center justify-center">
         <img
           src="img/derma.jpg"
@@ -375,7 +375,6 @@
         artificial and human intelligence leads to top-notch advice.
       </p>
     </div>
-    <!-- Images removed -->
   </section>
 
   <!-- Agents Section -->
@@ -407,7 +406,7 @@
         <div class="content"></div>
       </div>
 
-      <!-- “Agents” cards (images removed) -->
+      <!-- “Agents” cards -->
       <div class="mt-12 grid grid-cols-1 md:grid-cols-5 gap-6">
         <!-- AI Agents -->
         <div
@@ -469,6 +468,16 @@
     <div class="max-w-5xl mx-auto px-4 text-center">
       <p class="text-sm text-gray-400">
         &copy; 2025 DermaLab. All rights reserved.
+      </p>
+      <!-- Contact Info -->
+      <p class="text-sm text-gray-400 mt-2">
+        Contact: <span class="text-white">Yvette Pan</span><br />
+        <a
+          href="mailto:yanpan.0508@gmail.com"
+          class="text-secondary hover:underline"
+        >
+          yanpan.0508@gmail.com
+        </a>
       </p>
     </div>
   </footer>
@@ -786,7 +795,7 @@
       doctor.connectTo(humanExpertProxy.inputs[1]);
 
       /********** Updated positions **********/
-      // Left Column (x=100)
+      // Left Column
       patientPDF.moveTo({    x: 100, y: 100 });
       patientImages.moveTo({ x: 100, y: 250 });
       patientReport.moveTo({ x: 100, y: 400 });
@@ -795,7 +804,7 @@
       userProxy.moveTo({      x: 400, y: 250 });
       generalManager.moveTo({ x: 700, y: 250 });
 
-      // Right Column (x=900)
+      // Right Column
       doctor.moveTo({           x: 900, y: 100 });
       pharmaPerson.moveTo({     x: 900, y: 250 });
       humanExpertProxy.moveTo({ x: 900, y: 400 });
@@ -815,4 +824,5 @@
   </script>
 </body>
 </html>
+
 
