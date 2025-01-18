@@ -377,6 +377,24 @@
     </div>
   </section>
 
+  <!-- NEW Demo Section (BELOW About, ABOVE Agents) -->
+  <section id="demo" class="max-w-5xl mx-auto px-4 py-16 text-gray-200">
+    <h3 class="text-2xl font-bold mb-4 text-primary">Demo</h3>
+    <p class="mb-6 leading-relaxed">
+      Explore our short demo to see how DermaLab’s multiagent approach comes to life.
+    </p>
+    <div class="relative pb-[56.25%] h-0 w-full">
+      <iframe
+        class="absolute top-0 left-0 w-full h-full"
+        src="https://www.youtube.com/embed/ake-bZVQyJ8"
+        title="DermaLab Demo"
+        frameborder="0"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </section>
+
   <!-- Agents Section -->
   <section
     id="agents"
@@ -406,7 +424,7 @@
         <div class="content"></div>
       </div>
 
-      <!-- “Agents” cards -->
+      <!-- “Agents” cards (5 columns) -->
       <div class="mt-12 grid grid-cols-1 md:grid-cols-5 gap-6">
         <!-- AI Agents -->
         <div
@@ -511,18 +529,21 @@
 
       tabs.forEach((tab, idx) => {
         tab.addEventListener('click', () => {
+          // Remove active from all tabs
           tabs.forEach(t => t.classList.remove('active'));
+          // Set active on this tab
           tab.classList.add('active');
+          // Update content area
           content.innerHTML = tabContents[idx] || "Content";
 
-          // If this is the "Trio" tab, initialize the node workflow
+          // If "The Trio" tab, initialize node workflow
           if (idx === 0) {
             initNodeWorkflow();
           }
         });
       });
 
-      // Show the first tab on load + init
+      // Show the first tab on load
       content.innerHTML = tabContents[0];
       initNodeWorkflow();
     })();
@@ -532,13 +553,13 @@
      *******************************************************/
     function initNodeWorkflow() {
       const svg = document.getElementById('svg');
-      if (!svg) return; // only if #node-workflow is actually present
+      if (!svg) return; // only if #node-workflow is in the DOM
       svg.ns = svg.namespaceURI;
 
       const mouse = {
         currentInput: null,
         createPath(a, b) {
-          // Cubic Bézier from a -> b
+          // Cubic Bézier curve from point A -> B
           const diffX = b.x - a.x;
           const diffY = b.y - a.y;
           return (
@@ -576,6 +597,7 @@
       };
 
       window.onclick = function() {
+        // If user clicks outside, cancel the connection
         if (mouse.currentInput) {
           mouse.currentInput.path.removeAttribute('d');
           if (mouse.currentInput.node) {
@@ -593,6 +615,7 @@
         this.domElement.classList.add('node');
         this.domElement.setAttribute('title', name);
 
+        // The output circle
         const outEl = document.createElement('span');
         outEl.classList.add('output');
         outEl.innerHTML = '&nbsp;';
@@ -603,6 +626,7 @@
 
         const that = this;
         outEl.onclick = function(e) {
+          // If there's an input waiting, connect them
           if (mouse.currentInput && !that.ownsInput(mouse.currentInput)) {
             const temp = mouse.currentInput;
             mouse.currentInput = null;
@@ -619,6 +643,7 @@
         this.domElement.innerHTML = label;
         this.domElement.classList.add('connection', 'empty');
 
+        // Each input line is drawn as an SVG path
         this.path = document.createElementNS(svg.ns, 'path');
         svg.appendChild(this.path);
 
@@ -634,9 +659,10 @@
               mouse.currentInput.node = null;
             }
           }
+          // Now make this the active input
           mouse.currentInput = that;
 
-          // If already connected, detach from node
+          // If this input was already connected, detach
           if (that.node) {
             that.node.detachInput(that);
             that.domElement.classList.remove('filled');
@@ -681,7 +707,7 @@
         inp.domElement.classList.add('filled');
         this.attachedPaths.push({ input: inp, path: inp.path });
 
-        // Update path
+        // Draw the connecting path
         const iPos = inp.getAttachPoint();
         const oPos = this.getOutputPoint();
         inp.path.setAttributeNS(null, 'd', mouse.createPath(iPos, oPos));
@@ -706,7 +732,7 @@
       };
 
       Node.prototype.updatePosition = function() {
-        // Re-draw connections from this node
+        // Update all paths from this node
         const oPos = this.getOutputPoint();
         for (let i = 0; i < this.attachedPaths.length; i++) {
           const inp = this.attachedPaths[i].input;
@@ -717,7 +743,7 @@
             mouse.createPath(iPos, oPos)
           );
         }
-        // Re-draw connections into this node
+        // Update all paths into this node
         for (let j = 0; j < this.inputs.length; j++) {
           if (this.inputs[j].node) {
             const iPos = this.inputs[j].getAttachPoint();
@@ -750,7 +776,7 @@
         this.updatePosition();
       };
 
-      /********** Define the actual nodes **********/
+      // Define actual nodes
       const patientPDF       = new Node("Patient PDF");
       const patientImages    = new Node("Patient Images");
       const patientReport    = new Node("Patient Report");
@@ -760,24 +786,22 @@
       const pharmaPerson     = new Node("Pharma Person");
       const humanExpertProxy = new Node("Human Expert Proxy");
 
-      // User Proxy inputs
+      // Add inputs
       userProxy.addInput("Report");
       userProxy.addInput("Images");
       userProxy.addInput("PDF");
 
-      // General Manager inputs
       generalManager.addInput("From User Proxy");
       generalManager.addInput("From Doctor");
       generalManager.addInput("From Pharma");
       generalManager.addInput("From H. Expert");
 
-      // Doctor, Pharma, Human Expert
       doctor.addInput("From GM");
       pharmaPerson.addInput("From GM");
       humanExpertProxy.addInput("From GM");
       humanExpertProxy.addInput("Feedback from Doctor");
 
-      // Connections
+      // Connect them
       patientReport.connectTo(userProxy.inputs[0]);
       patientImages.connectTo(userProxy.inputs[1]);
       patientPDF.connectTo(userProxy.inputs[2]);
@@ -794,22 +818,19 @@
       // doctor => humanExpert for feedback
       doctor.connectTo(humanExpertProxy.inputs[1]);
 
-      /********** Updated positions **********/
-      // Left Column
+      // Position them
       patientPDF.moveTo({    x: 100, y: 100 });
       patientImages.moveTo({ x: 100, y: 250 });
       patientReport.moveTo({ x: 100, y: 400 });
 
-      // Middle Column
       userProxy.moveTo({      x: 400, y: 250 });
       generalManager.moveTo({ x: 700, y: 250 });
 
-      // Right Column
       doctor.moveTo({           x: 900, y: 100 });
       pharmaPerson.moveTo({     x: 900, y: 250 });
       humanExpertProxy.moveTo({ x: 900, y: 400 });
 
-      // Initialize them
+      // Initialize
       [
         patientPDF,
         patientImages,
@@ -824,5 +845,3 @@
   </script>
 </body>
 </html>
-
-
